@@ -1,0 +1,318 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+:root {
+  --bg: #FFF8E7;
+  --primary: #FF6B6B;
+  --secondary: #4ECDC4;
+  --yellow: #FFE66D;
+  --mint: #95E1D3;
+  --salmon: #F38181;
+  --purple: #A78BFA;
+  --orange: #FB923C;
+  --pink: #F472B6;
+  --text: #2C3E50;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --radius: 24px;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', 'PingFang SC', 'Noto Sans SC', cursive, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+#app {
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+.page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.page-enter-active, .page-leave-active {
+  transition: transform 0.5s cubic-bezier(.34, 1.56, .64, 1), opacity 0.4s ease;
+}
+.page-enter-from {
+  transform: translateX(100%) scale(0.9);
+  opacity: 0;
+}
+.page-leave-to {
+  transform: translateX(-100%) scale(0.9);
+  opacity: 0;
+}
+.big-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 40px;
+  border: none;
+  border-radius: 60px;
+  font-size: 28px;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+  transition: all 0.1s ease;
+  min-width: 160px;
+  min-height: 64px;
+}
+.big-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+.big-btn.primary { background: var(--primary); color: #fff; }
+.big-btn.secondary { background: var(--secondary); color: #fff; }
+.big-btn.yellow { background: var(--yellow); color: var(--text); }
+.big-btn.purple { background: var(--purple); color: #fff; }
+.big-btn.orange { background: var(--orange); color: #fff; }
+.big-btn.pink { background: var(--pink); color: #fff; }
+
+/* Dino guide */
+.dino-guide {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  animation: dinoFloat 3s ease-in-out infinite;
+}
+.dino-guide .dino-bubble {
+  background: #fff;
+  border-radius: 16px 16px 16px 4px;
+  padding: 6px 14px;
+  font-size: 15px;
+  color: #888;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* Difficulty selector */
+.diff-selector {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.diff-selector button {
+  padding: 8px 18px;
+  border-radius: 40px;
+  border: 3px solid #ddd;
+  background: #fff;
+  font-size: 20px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.diff-selector button.active {
+  border-color: var(--purple);
+  background: var(--purple);
+  color: #fff;
+  transform: scale(1.05);
+}
+.diff-selector button:active { transform: scale(0.93); }
+.diff-label {
+  font-size: 18px;
+  color: #999;
+  margin-top: 12px;
+}
+
+/* Scrollbar hide */
+.poem-list::-webkit-scrollbar { display: none; }
+
+/* Animations */
+@keyframes dinoBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+@keyframes dinoSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes dinoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes starFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.1); }
+}
+@keyframes numberPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes itemFadeIn {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeInUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+@keyframes correctWiggle {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-5deg) scale(1.1); }
+  75% { transform: rotate(5deg) scale(1.1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Poem background themes */
+.poem-bg-spring { background: linear-gradient(180deg, #FFF0F5 0%, #FFE4E1 50%, #FFF8E7 100%); }
+.poem-bg-summer { background: linear-gradient(180deg, #E0F7FA 0%, #B2EBF2 50%, #FFF8E7 100%); }
+.poem-bg-autumn { background: linear-gradient(180deg, #FFF3E0 0%, #FFE0B2 50%, #FFF8E7 100%); }
+.poem-bg-winter { background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 50%, #F0F4F8 100%); }
+.poem-bg-landscape { background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 50%, #FFF8E7 100%); }
+.poem-bg-water { background: linear-gradient(180deg, #E0F2FE 0%, #BAE6FD 50%, #F0F9FF 100%); }
+.poem-bg-night { background: linear-gradient(180deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%); }
+.poem-bg-nature { background: linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 50%, #FFF8E7 100%); }
+.poem-bg-pastoral { background: linear-gradient(180deg, #FEF9C3 0%, #FDE68A 50%, #FFF8E7 100%); }
+.poem-bg-frontier { background: linear-gradient(180deg, #FCE4EC 0%, #FFCDD2 50%, #FFF8E7 100%); }
+.poem-bg-philosophy { background: linear-gradient(180deg, #F3E5F5 0%, #E1BEE7 50%, #FFF8E7 100%); }
+.poem-bg-festive { background: linear-gradient(180deg, #FFF0F5 0%, #FFCCD2 50%, #FFF8E7 100%); }
+.poem-bg-patriotic { background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 50%, #FFECEF 100%); }
+.poem-bg-philosophical { background: linear-gradient(180deg, #EDE7F6 0%, #D1C4E9 50%, #FFF8E7 100%); }
+.poem-bg-childish { background: linear-gradient(180deg, #FCE4EC 0%, #F8BBD0 50%, #FFF8E7 100%); }
+.poem-bg-flowers { background: linear-gradient(180deg, #FFF0F5 0%, #FCE4EC 50%, #FFF8E7 100%); }
+.poem-bg-sad { background: linear-gradient(180deg, #ECEFF1 0%, #CFD8DC 50%, #ECEFF1 100%); }
+.poem-bg-homesick { background: linear-gradient(180deg, #FFF8E1 0%, #FFECB3 50%, #FFF8E7 100%); }
+
+.poem-bg-night .p-title-big,
+.poem-bg-night .p-author-big,
+.poem-bg-night .p-line-text { color: #E0E0E0 !important; }
+.poem-bg-night .p-text { background: rgba(255,255,255,0.1) !important; }
+
+/* Pinyin ruby */
+.p-line-text ruby { ruby-align: center; }
+.p-line-text ruby rt { font-size: 14px; color: var(--purple); letter-spacing: 0; }
+
+/* Confetti */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1001;
+  overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  top: -20px;
+  animation: confettiFall linear forwards;
+}
+
+/* Celebration overlay */
+.celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+}
+.celebration-overlay .celebration-box {
+  background: #fff;
+  border-radius: 40px;
+  padding: 40px 30px 30px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.5s cubic-bezier(.34, 1.56, .64, 1);
+  max-width: 360px;
+  width: 90%;
+}
+.celebration-overlay .celebration-box .big { font-size: 72px; }
+.celebration-overlay .celebration-box .msg {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 12px 0 6px;
+  color: var(--primary);
+}
+.celebration-overlay .celebration-box .sub {
+  font-size: 18px;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 480px) {
+  .welcome h1 { font-size: 32px; }
+  .welcome .dino-big { font-size: 90px; }
+  .menu .subject-grid { gap: 12px; }
+  .menu .subject-card { min-height: 120px; padding: 14px 8px; }
+  .menu .subject-card .icon { font-size: 44px; }
+  .menu .subject-card .label { font-size: 20px; }
+  .number-module .number-display .digit { font-size: 90px; }
+  .shape-module .shape-area .options button { font-size: 56px; width: 80px; height: 80px; }
+  .submenu .module-card { min-height: 100px; padding: 12px 6px; }
+  .submenu .module-card .icon { font-size: 36px; }
+  .submenu .module-card .label { font-size: 17px; }
+  .alpha-module .alpha-display .letter { font-size: 88px; }
+  .poem-detail .poem-content .p-text .p-line-text { font-size: 22px; }
+}
+@media (max-height: 640px) {
+  .welcome .dino-big { font-size: 70px; }
+  .welcome h1 { font-size: 28px; }
+  .menu .greeting { font-size: 22px; margin-top: 14px; }
+  .menu .subject-card { min-height: 90px; padding: 10px 6px; }
+  .menu .subject-card .icon { font-size: 36px; }
+  .number-module .number-display .digit { font-size: 70px; }
+  .submenu .module-grid { gap: 8px; }
+  .submenu .module-card { min-height: 80px; padding: 8px 4px; }
+  .submenu .module-card .icon { font-size: 30px; }
+  .poem-detail .poem-content .p-text { padding: 12px 16px; }
+  .poem-detail .poem-content .p-text .p-line-text { font-size: 20px; }
+}
