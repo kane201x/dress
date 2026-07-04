@@ -20,6 +20,7 @@ Thumbs.db
 # Env
 .env
 *.log
+backend/src/main/resources/application-dev.yml
 
 # Temp
 /tmp/
