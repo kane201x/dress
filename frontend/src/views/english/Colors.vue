@@ -87,7 +87,7 @@ function pickColor(i) {
     colorFeedback.value = 'correct'
     colorFeedbackText.value = '🎉 是 ' + colorData.value.english + '！'
     dinoMood.value = 'excited'; dinoText.value = '答对啦！是' + colorData.value.english
-    if (!muted.value) { speakEN(colorData.value.english); speakEN('Good job!') }
+    if (!muted.value) { speakEN(colorNameFromCode(currentOptions.value[i])); speakEN('Good job!') }
     setTimeout(() => {
       if (colorIndex.value < colorQuestions.value.length - 1) {
         colorIndex.value++; resetColor()
@@ -102,8 +102,8 @@ function pickColor(i) {
   } else {
     colorFeedback.value = 'wrong'
     colorFeedbackText.value = '😅 再试试~'
-    if (!muted.value) speakEN('Try again')
-    setTimeout(() => resetColor(), 600)
+    if (!muted.value) { speakEN(colorNameFromCode(currentOptions.value[i])); speakEN('Try again') }
+    setTimeout(() => resetColor(), 800)
   }
 }
 </script>

@@ -117,9 +117,11 @@ function pickShape(i) {
     }, 3000)
   } else {
     shapeData.feedback = 'wrong'
+    const wrongEmoji = shapeData.options[i]
+    const wrongShape = shapePool.find(s => s.emoji === wrongEmoji)
     shapeData.feedbackText = '😅 再试试~'
-    if (!muted.value) speakCN('再试试')
-    setTimeout(() => { shapeData.feedback = ''; shapeData.feedbackText = ''; shapeData.selected = -1 }, 600)
+    if (!muted.value) { speakCN(wrongShape ? wrongShape.name : wrongEmoji); speakCN('再试试') }
+    setTimeout(() => { shapeData.feedback = ''; shapeData.feedbackText = ''; shapeData.selected = -1 }, 800)
   }
 }
 

@@ -66,7 +66,7 @@ function pickBody(i) {
     bodyFeedback.value = 'correct'
     bodyFeedbackText.value = '🎉 ' + bodyData.value.english + '！'
     dinoMood.value = 'excited'; dinoText.value = '答对啦！'
-    if (!muted.value) { speakEN(bodyData.value.english); speakCN('你真棒！') }
+    if (!muted.value) { speakEN(bodyOptions.value[i]); speakCN('你真棒！') }
     setTimeout(() => {
       if (bodyIndex.value < sessionQuestions.value.length - 1) {
         bodyIndex.value++; resetBody()
@@ -82,8 +82,8 @@ function pickBody(i) {
   } else {
     bodyFeedback.value = 'wrong'
     bodyFeedbackText.value = '😅 再想想~'
-    if (!muted.value) speakEN('Try again')
-    setTimeout(() => resetBody(), 600)
+    if (!muted.value) { speakEN(bodyOptions.value[i]); speakEN('Try again') }
+    setTimeout(() => resetBody(), 800)
   }
 }
 </script>

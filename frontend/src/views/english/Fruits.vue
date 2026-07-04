@@ -66,7 +66,7 @@ function pickFruit(i) {
     fruitFeedback.value = 'correct'
     fruitFeedbackText.value = '🎉 ' + fruitData.value.english + '！'
     dinoMood.value = 'excited'; dinoText.value = '好吃的水果！'
-    if (!muted.value) { speakEN(fruitData.value.english); speakCN('你真棒！') }
+    if (!muted.value) { speakEN(fruitOptions.value[i]); speakCN('你真棒！') }
     setTimeout(() => {
       if (fruitIndex.value < sessionQuestions.value.length - 1) {
         fruitIndex.value++; resetFruit()
@@ -82,8 +82,8 @@ function pickFruit(i) {
   } else {
     fruitFeedback.value = 'wrong'
     fruitFeedbackText.value = '😅 再想想~'
-    if (!muted.value) speakEN('Try again')
-    setTimeout(() => resetFruit(), 600)
+    if (!muted.value) { speakEN(fruitOptions.value[i]); speakEN('Try again') }
+    setTimeout(() => resetFruit(), 800)
   }
 }
 </script>

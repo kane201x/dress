@@ -14,8 +14,9 @@
           }"
           :style="{animationDelay: i*0.06+'s'}"
           @click="clickSortItem(i)">
-          <span class="emoji">{{ item.emoji }}</span>
-          <span class="label">{{ item.label }}</span>
+          <span class="emoji">{{ item.e }}</span>
+          <span class="label">{{ item.l }}</span>
+          <span class="value">{{ item.v }}</span>
         </div>
       </div>
       <div v-if="sortData.phase==='arrange'" class="sort-actions">
@@ -70,6 +71,11 @@ const sortPools = [
   { items: [{ e: '🐟', l: '小鱼', v: 1 }, { e: '🐬', l: '海豚', v: 2 }, { e: '🐋', l: '鲸鱼', v: 3 }], asc: true },
   { items: [{ e: '🪨', l: '小石头', v: 1 }, { e: '⚽', l: '皮球', v: 2 }, { e: '🏀', l: '篮球', v: 3 }, { e: '🏐', l: '排球', v: 4 }], asc: true },
   { items: [{ e: '🐜', l: '蚂蚁', v: 1 }, { e: '🐰', l: '兔子', v: 2 }, { e: '🦊', l: '狐狸', v: 3 }], asc: true },
+  { items: [{ e: '1️⃣', l: '一', v: 1 }, { e: '2️⃣', l: '二', v: 2 }, { e: '3️⃣', l: '三', v: 3 }], asc: true },
+  { items: [{ e: '1️⃣', l: '一', v: 1 }, { e: '2️⃣', l: '二', v: 2 }, { e: '3️⃣', l: '三', v: 3 }, { e: '4️⃣', l: '四', v: 4 }], asc: true },
+  { items: [{ e: '🔢', l: '数字', v: 5 }, { e: '🔢', l: '数字', v: 10 }, { e: '🔢', l: '数字', v: 15 }], asc: true },
+  { items: [{ e: '🔢', l: '数字', v: 2 }, { e: '🔢', l: '数字', v: 4 }, { e: '🔢', l: '数字', v: 6 }, { e: '🔢', l: '数字', v: 8 }], asc: true },
+  { items: [{ e: '🔢', l: '数字', v: 1 }, { e: '🔢', l: '数字', v: 3 }, { e: '🔢', l: '数字', v: 5 }, { e: '🔢', l: '数字', v: 7 }, { e: '🔢', l: '数字', v: 9 }], asc: true },
 ]
 
 const sortQuestions = computed(() => {
@@ -143,8 +149,8 @@ function checkOrder() {
   } else {
     sortData.feedback = 'wrong'
     sortData.feedbackText = '😅 再调整一下~'
-    if (!muted.value) speakCN('再调整一下')
-    setTimeout(() => { sortData.feedback = ''; sortData.feedbackText = '' }, 600)
+    if (!muted.value) { speakCN(sortData.items.map(i => i.l).join('、')); speakCN('再调整一下') }
+    setTimeout(() => { sortData.feedback = ''; sortData.feedbackText = '' }, 800)
   }
 }
 
@@ -169,6 +175,7 @@ initSort(0)
 .sort-module .sort-area .sort-items .sort-item:active { transform: scale(0.93); }
 .sort-module .sort-area .sort-items .sort-item .emoji { font-size: 60px; }
 .sort-module .sort-area .sort-items .sort-item .label { font-size: 18px; color: #888; }
+.sort-module .sort-area .sort-items .sort-item .value { font-size: 24px; font-weight: bold; color: var(--secondary); }
 .sort-module .sort-area .sort-items .sort-item.selected { box-shadow: 0 0 0 4px var(--orange); }
 .sort-module .sort-area .sort-items .sort-item.correct { background: rgba(78, 205, 196, 0.3) !important; animation: correctWiggle 0.4s ease; }
 .sort-module .sort-area .sort-items .sort-item.wrong { animation: shake 0.3s ease; }

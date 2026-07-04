@@ -66,7 +66,7 @@ function pickVehicle(i) {
     vehicleFeedback.value = 'correct'
     vehicleFeedbackText.value = '🎉 ' + vehicleData.value.english + '！'
     dinoMood.value = 'excited'; dinoText.value = '好酷的交通工具！'
-    if (!muted.value) { speakEN(vehicleData.value.english); speakCN('你真棒！') }
+    if (!muted.value) { speakEN(vehicleOptions.value[i]); speakCN('你真棒！') }
     setTimeout(() => {
       if (vehicleIndex.value < sessionQuestions.value.length - 1) {
         vehicleIndex.value++; resetVehicle()
@@ -82,8 +82,8 @@ function pickVehicle(i) {
   } else {
     vehicleFeedback.value = 'wrong'
     vehicleFeedbackText.value = '😅 再想想~'
-    if (!muted.value) speakEN('Try again')
-    setTimeout(() => resetVehicle(), 600)
+    if (!muted.value) { speakEN(vehicleOptions.value[i]); speakEN('Try again') }
+    setTimeout(() => resetVehicle(), 800)
   }
 }
 </script>

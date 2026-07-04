@@ -116,8 +116,8 @@ function pickAdd(i) {
   } else {
     addData.feedback = 'wrong'
     addData.feedbackText = '😅 再数数~'
-    if (!muted.value) speakCN('再数数')
-    setTimeout(() => { addData.feedback = ''; addData.feedbackText = ''; addData.selected = -1 }, 600)
+    if (!muted.value) { speakCN(addData.options[i] + ''); speakCN('再数数') }
+    setTimeout(() => { addData.feedback = ''; addData.feedbackText = ''; addData.selected = -1 }, 800)
   }
 }
 

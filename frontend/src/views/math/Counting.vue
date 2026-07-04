@@ -187,7 +187,7 @@ function pickAnswer(n) {
   } else {
     dinoMood.value = 'thinking'
     dinoText.value = '再数一次看看~'
-    if (!muted.value) speakCN('再数一次看看')
+    if (!muted.value) { speakCN(n + ''); speakCN('再数一次看看') }
     setTimeout(() => { dinoMood.value = 'happy' }, 2000)
   }
 }

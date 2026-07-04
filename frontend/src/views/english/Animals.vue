@@ -67,7 +67,7 @@ function pickAnimal(i) {
     animalFeedback.value = 'correct'
     animalFeedbackText.value = '🎉 ' + animalData.value.english + '！'
     dinoMood.value = 'excited'; dinoText.value = '答对啦！教教我~'
-    if (!muted.value) { speakEN(animalData.value.english); speakCN('你真棒！') }
+    if (!muted.value) { speakEN(animalOptions.value[i]); speakCN('你真棒！') }
     setTimeout(() => {
       if (animalIndex.value < sessionQuestions.value.length - 1) {
         animalIndex.value++; resetAnimal()
@@ -83,8 +83,8 @@ function pickAnimal(i) {
   } else {
     animalFeedback.value = 'wrong'
     animalFeedbackText.value = '😅 再想想~'
-    if (!muted.value) speakEN('Try again')
-    setTimeout(() => resetAnimal(), 600)
+    if (!muted.value) { speakEN(animalOptions.value[i]); speakEN('Try again') }
+    setTimeout(() => resetAnimal(), 800)
   }
 }
 </script>
