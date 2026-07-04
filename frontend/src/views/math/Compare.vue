@@ -1,8 +1,9 @@
 <template>
   <div class="page compare-module">
     <TopBar back-route="/math" @back="router.push('/math')" />
+    <DinoGuide :text="dinoText" :mood="dinoMood" @tap="tapDino" />
+    <div class="mute-btn" @click="muted = !muted">{{ muted ? '🔇' : '🔊' }}</div>
     <div class="compare-area">
-      <DinoGuide text="点一点，比一比" />
       <div class="question">{{ compareData.question }}</div>
       <div class="pair">
         <div v-for="(item,i) in compareData.items" :key="i" class="item"
@@ -13,7 +14,9 @@
         </div>
       </div>
       <div class="feedback">{{ compareData.feedbackText }}</div>
-      <div class="progress" style="font-size:16px;color:#bbb;margin-top:6px;">{{ compareIndex+1 }} / {{ compareScenes.length }}</div>
+      <div class="progress-bar">
+        <div class="progress-fill" :style="{width: (compareIndex+1)/5*100+'%'}"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -33,11 +36,16 @@ const userStore = useUserStore()
 const progressStore = useProgressStore()
 const celebrationStore = useCelebrationStore()
 
-function shuffle(arr) {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] }
-  return a
+const muted = ref(false)
+const dinoMood = ref('happy')
+const dinoText = ref('点一点，比一比')
+const dinoClicks = ref(0)
+function tapDino() {
+  dinoClicks.value++
+  if (dinoClicks.value >= 3) { dinoMood.value = 'excited'; dinoText.value = '比大小真好玩！'; setTimeout(() => { dinoMood.value = 'happy'; dinoText.value = '点一点，比一比' }, 2000); dinoClicks.value = 0 }
 }
+
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] }; return a }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)] }
 
 const comparePairs = [
@@ -56,9 +64,8 @@ const comparePairs = [
 ]
 
 const compareScenes = computed(() => {
-  const qty = 50
   const scenes = []
-  for (let i = 0; i < qty; i++) {
+  for (let i = 0; i < 20; i++) {
     const pair = pick(comparePairs)
     const askBig = Math.random() > 0.5
     const items = shuffle([
@@ -68,7 +75,7 @@ const compareScenes = computed(() => {
     const answer = items.findIndex(it => askBig ? it.big : !it.big)
     scenes.push({ question: askBig ? '谁更大？' : '谁更小？', items, answer })
   }
-  return scenes
+  return shuffle(scenes).slice(0, 5)
 })
 
 const compareIndex = ref(0)
@@ -82,6 +89,7 @@ function initCompare(idx) {
   compareData.selected = -1
   compareData.feedback = ''
   compareData.feedbackText = ''
+  if (!muted.value) setTimeout(() => speakCN(s.question), 300)
 }
 
 function pickCompare(i) {
@@ -90,17 +98,16 @@ function pickCompare(i) {
   if (i === compareData.answer) {
     compareData.feedback = 'correct'
     compareData.feedbackText = '🎉 答对啦！'
-    speakCN('对了！')
+    dinoMood.value = 'excited'; dinoText.value = '比一比真聪明！'
+    if (!muted.value) { speakCN('对了！'); speakCN('你真棒！') }
     setTimeout(() => {
       if (compareIndex.value < compareScenes.value.length - 1) {
         compareIndex.value++
+        dinoMood.value = 'happy'; dinoText.value = '下一对来啦'
         initCompare(compareIndex.value)
-        nextTick(() => speakCN(compareData.question))
       } else {
         if (!progressStore.completedModules.compare) {
-          progressStore.completeModule('compare')
-          userStore.updateStars(3)
-          progressStore.unlockSticker('compare')
+          progressStore.completeModule('compare'); userStore.updateStars(3); progressStore.unlockSticker('compare')
           celebrationStore.show('🐘', '比较大王！', '你学会了比大小！')
         } else { celebrationStore.show('⭐', '全部完成！', '') }
       }
@@ -108,7 +115,7 @@ function pickCompare(i) {
   } else {
     compareData.feedback = 'wrong'
     compareData.feedbackText = '😅 再想想~'
-    speakCN('再想想')
+    if (!muted.value) speakCN('再想想')
     setTimeout(() => { compareData.feedback = ''; compareData.feedbackText = ''; compareData.selected = -1 }, 600)
   }
 }
@@ -122,8 +129,9 @@ initCompare(0)
   padding-top: 70px;
   justify-content: flex-start;
 }
-.compare-module .compare-area { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 10px; width: 100%; }
-.compare-module .compare-area .question { font-size: 24px; color: #666; }
+.mute-btn { position: absolute; top: 76px; right: 12px; font-size: 28px; cursor: pointer; user-select: none; z-index: 10; }
+.compare-module .compare-area { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 10px; width: 100%; flex: 1; justify-content: center; }
+.compare-module .compare-area .question { font-size: 26px; color: #666; font-weight: bold; }
 .compare-module .compare-area .pair { display: flex; gap: 30px; align-items: flex-end; justify-content: center; }
 .compare-module .compare-area .pair .item {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -131,10 +139,12 @@ initCompare(0)
   transition: all 0.2s; background: rgba(255, 255, 255, 0.5);
 }
 .compare-module .compare-area .pair .item:active { transform: scale(0.93); }
-.compare-module .compare-area .pair .item .emoji-big { font-size: 80px; }
-.compare-module .compare-area .pair .item .emoji-small { font-size: 50px; }
+.compare-module .compare-area .pair .item .emoji-big { font-size: 90px; }
+.compare-module .compare-area .pair .item .emoji-small { font-size: 56px; }
 .compare-module .compare-area .pair .item .label { font-size: 20px; color: #888; }
 .compare-module .compare-area .pair .item.correct { background: rgba(78, 205, 196, 0.3) !important; animation: correctWiggle 0.4s ease; }
 .compare-module .compare-area .pair .item.wrong { animation: shake 0.3s ease; }
 .compare-module .compare-area .feedback { font-size: 32px; min-height: 48px; }
+.progress-bar { width: min(300px, 70vw); height: 8px; background: #e0e0e0; border-radius: 4px; margin: 4px 0; overflow: hidden; }
+.progress-bar .progress-fill { height: 100%; background: var(--orange); border-radius: 4px; transition: width 0.4s ease; }
 </style>

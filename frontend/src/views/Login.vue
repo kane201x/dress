@@ -25,6 +25,9 @@
           <label>确认密码</label>
           <input v-model="confirmPassword" type="password" placeholder="再次输入密码" required>
         </div>
+        <label class="remember-row">
+          <input type="checkbox" v-model="remember"> 记住密码
+        </label>
         <p v-if="error" class="error">{{ error }}</p>
         <button type="submit" class="big-btn primary start-btn" :disabled="loading">
           {{ loading ? '处理中...' : (mode==='login' ? '🚀 登录' : '🎉 注册') }}
@@ -46,9 +49,10 @@ const progressStore = useProgressStore()
 
 const mode = ref('login')
 const name = ref('')
-const email = ref('')
-const password = ref('')
+const email = ref(localStorage.getItem('saved_email') || '')
+const password = ref(localStorage.getItem('saved_password') || '')
 const confirmPassword = ref('')
+const remember = ref(!!localStorage.getItem('saved_email'))
 const error = ref('')
 const loading = ref(false)
 
@@ -68,6 +72,13 @@ async function submit() {
       await userStore.login(email.value, password.value)
     } else {
       await userStore.register(name.value, email.value, password.value)
+    }
+    if (remember.value) {
+      localStorage.setItem('saved_email', email.value)
+      localStorage.setItem('saved_password', password.value)
+    } else {
+      localStorage.removeItem('saved_email')
+      localStorage.removeItem('saved_password')
     }
     await progressStore.loadProgress(userStore.userId)
     router.push('/menu')
@@ -110,6 +121,8 @@ async function submit() {
   font-size: 16px; font-family: inherit; transition: border 0.2s; outline: none;
 }
 .login-box .login-form .field input:focus { border-color: var(--secondary); }
+.login-box .login-form .remember-row { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #888; cursor: pointer; user-select: none; }
+.login-box .login-form .remember-row input { width: 16px; height: 16px; cursor: pointer; }
 .login-box .login-form .error { color: var(--primary); font-size: 14px; text-align: center; margin: 0; }
 .login-box .login-form .start-btn { margin-top: 4px; }
 </style>

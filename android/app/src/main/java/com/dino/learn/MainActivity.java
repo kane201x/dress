@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Locale;
 
 import androidx.activity.OnBackPressedCallback;
@@ -118,8 +119,16 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                return interceptAsset(url);
+            }
+
+            @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
+                return interceptAsset(request.getUrl().toString());
+            }
+
+            private WebResourceResponse interceptAsset(String url) {
                 if (url.startsWith(TARGET_URL + "/assets/")) {
                     String assetPath = url.substring(TARGET_URL.length() + 1);
                     try {
@@ -127,7 +136,9 @@ public class MainActivity extends AppCompatActivity {
                         String ext = assetPath.contains(".") ? assetPath.substring(assetPath.lastIndexOf('.') + 1) : "";
                         String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
                         if (mime == null) mime = "application/octet-stream";
-                        return new WebResourceResponse(mime, "UTF-8", is);
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("Access-Control-Allow-Origin", "*");
+                        return new WebResourceResponse(mime, "UTF-8", 200, "OK", headers, is);
                     } catch (java.io.IOException e) {
                         // fall through to network
                     }
@@ -215,10 +226,12 @@ public class MainActivity extends AppCompatActivity {
     private void loadLocalFrontend() {
         try {
             java.io.InputStream is = getAssets().open("index.html");
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            byte[] buf = new byte[4096];
+            int n;
+            while ((n = is.read(buf)) != -1) baos.write(buf, 0, n);
             is.close();
-            String html = new String(buffer, java.nio.charset.StandardCharsets.UTF_8);
+            String html = baos.toString("UTF-8");
             webView.loadDataWithBaseURL(TARGET_URL + "/", html, "text/html", "UTF-8", null);
         } catch (Exception e) {
             webView.loadUrl(TARGET_URL);

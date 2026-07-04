@@ -1,31 +1,42 @@
 <template>
   <div class="page sort-module">
     <TopBar back-route="/math" @back="router.push('/math')" />
+    <DinoGuide :text="dinoText" :mood="dinoMood" @tap="tapDino" />
+    <div class="mute-btn" @click="muted = !muted">{{ muted ? '🔇' : '🔊' }}</div>
     <div class="sort-area">
-      <DinoGuide text="从最小到最大按顺序排" />
-      <div class="hint">从最小的开始，按顺序点击数字！</div>
-      <div class="targets">
-        <div v-for="(slot, i) in sortSlots" :key="i" class="slot"
-          :class="{filled: slot !== null, highlight: sortNextIdx === i}"
-          @click="slotClick(i)">
-          {{ slot !== null ? slot : (sortNextIdx === i ? '⬇️' : '?') }}
+      <div class="question">{{ sortData.question }}</div>
+      <div class="sort-items">
+        <div v-for="(item,i) in sortData.items" :key="i" class="sort-item"
+          :class="{
+            correct: sortData.feedback==='correct' && sortData.selectedIndex===i,
+            wrong: sortData.feedback==='wrong' && sortData.selectedIndex===i,
+            selected: i===sortData.selectedForPick
+          }"
+          :style="{animationDelay: i*0.06+'s'}"
+          @click="clickSortItem(i)">
+          <span class="emoji">{{ item.emoji }}</span>
+          <span class="label">{{ item.label }}</span>
         </div>
       </div>
-      <div class="sort-box">
-        <div v-for="(n, i) in sortNumbers" :key="i" class="sort-num"
-          :class="{placed: sortPlaced[i]}"
-          @click="placeNumber(i)">
-          {{ n }}
-        </div>
+      <div v-if="sortData.phase==='arrange'" class="sort-actions">
+        <button v-if="sortData.items.length>1" @click="swapItems">交换</button>
+        <button v-if="sortData.items.length>1" @click="checkOrder">检查</button>
       </div>
-      <div class="result">{{ sortResult }}</div>
-      <div class="progress" style="font-size:16px;color:#bbb;margin-top:6px;">{{ sortRound+1 }} / {{ sortTotalRounds }}</div>
+      <div v-if="sortData.phase==='pick'" class="pick-options">
+        <button v-for="(opt,i) in sortData.options" :key="i"
+          :class="{correct: sortData.feedback==='correct' && sortData.selectedPick===i, wrong: sortData.feedback==='wrong' && sortData.selectedPick===i}"
+          @click="clickPick(i)">{{ opt.label }}</button>
+      </div>
+      <div class="feedback">{{ sortData.feedbackText }}</div>
+      <div class="progress-bar">
+        <div class="progress-fill" :style="{width: (sortIndex+1)/5*100+'%'}"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, reactive, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 import { useProgressStore } from '../../stores/progress'
@@ -39,117 +50,136 @@ const userStore = useUserStore()
 const progressStore = useProgressStore()
 const celebrationStore = useCelebrationStore()
 
-function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min }
-
-const sortRound = ref(0)
-const sortTotalRounds = 50
-const sortNumbers = ref([])
-const sortSorted = ref([])
-const sortSlots = ref([])
-const sortPlaced = ref([])
-const sortNextIdx = ref(0)
-const sortResult = ref('')
-
-function initSort() {
-  const d = userStore.difficulty
-  const patterns = [
-    () => { const t = 5; const s = randInt(1, 8); return Array.from({ length: t }, (_, i) => s + i) },
-    () => { const t = randInt(5, 6); const s = randInt(1, 12); return Array.from({ length: t }, (_, i) => s + i) },
-    () => { const t = 5; const st = randInt(1, 3); const s = randInt(1, 8); return Array.from({ length: t }, (_, i) => s + i * st) },
-    () => { const t = randInt(4, 6); const st = randInt(1, 5); const s = randInt(1, 15); return Array.from({ length: t }, (_, i) => s + i * st) },
-  ]
-  const idx = Math.min(d - 1, patterns.length - 1)
-  const sorted = patterns[idx]()
-  const shuffled = [...sorted]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-  sortSorted.value = sorted
-  sortNumbers.value = shuffled
-  sortSlots.value = Array(sorted.length).fill(null)
-  sortPlaced.value = Array(sorted.length).fill(false)
-  sortNextIdx.value = 0
-  sortResult.value = ''
+const muted = ref(false)
+const dinoMood = ref('happy')
+const dinoText = ref('排一排，谁最大？')
+const dinoClicks = ref(0)
+function tapDino() {
+  dinoClicks.value++
+  if (dinoClicks.value >= 3) { dinoMood.value = 'excited'; dinoText.value = '排序真好玩！'; setTimeout(() => { dinoMood.value = 'happy'; dinoText.value = '排一排，谁最大？' }, 2000); dinoClicks.value = 0 }
 }
 
-function placeNumber(i) {
-  if (sortPlaced.value[i]) return
-  const num = sortNumbers.value[i]
-  const expected = sortSorted.value[sortNextIdx.value]
-  if (num === expected) {
-    sortPlaced.value[i] = true
-    sortSlots.value[sortNextIdx.value] = num
-    speakCN(String(num))
-    sortNextIdx.value++
-    if (sortNextIdx.value >= sortSorted.value.length) {
-      sortResult.value = '🎉 排好啦！'
-      setTimeout(() => {
-        if (sortRound.value < sortTotalRounds - 1) {
-          sortRound.value++
-          initSort()
-          sortResult.value = ''
-          nextTick(() => speakCN('继续排序吧'))
-        } else if (!progressStore.completedModules.sorting) {
-          progressStore.completeModule('sorting')
-          userStore.updateStars(3)
-          progressStore.unlockSticker('sorting')
-          setTimeout(() => celebrationStore.show('📊', '排序小能手！', '你会按顺序排数字啦！'), 600)
-        }
-      }, 800)
-    }
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] }; return a }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)] }
+
+const sortPools = [
+  { items: [{ e: '🐭', l: '老鼠', v: 1 }, { e: '🐱', l: '小猫', v: 2 }, { e: '🐶', l: '小狗', v: 3 }, { e: '🐘', l: '大象', v: 4 }], asc: true },
+  { items: [{ e: '🍇', l: '葡萄', v: 1 }, { e: '🍎', l: '苹果', v: 2 }, { e: '🍉', l: '西瓜', v: 3 }], asc: true },
+  { items: [{ e: '🌷', l: '小花', v: 1 }, { e: '🌳', l: '大树', v: 2 }, { e: '🏔️', l: '大山', v: 3 }], asc: true },
+  { items: [{ e: '💧', l: '小水滴', v: 1 }, { e: '🪣', l: '水桶', v: 2 }, { e: '🌊', l: '大海', v: 3 }], asc: true },
+  { items: [{ e: '🐟', l: '小鱼', v: 1 }, { e: '🐬', l: '海豚', v: 2 }, { e: '🐋', l: '鲸鱼', v: 3 }], asc: true },
+  { items: [{ e: '🪨', l: '小石头', v: 1 }, { e: '⚽', l: '皮球', v: 2 }, { e: '🏀', l: '篮球', v: 3 }, { e: '🏐', l: '排球', v: 4 }], asc: true },
+  { items: [{ e: '🐜', l: '蚂蚁', v: 1 }, { e: '🐰', l: '兔子', v: 2 }, { e: '🦊', l: '狐狸', v: 3 }], asc: true },
+]
+
+const sortQuestions = computed(() => {
+  const pool = []
+  for (let i = 0; i < 50; i++) {
+    const s = pick(sortPools)
+    const shuffled = shuffle(s.items)
+    pool.push({ question: s.asc ? '从最小排到最大' : '从最大排到最小', items: shuffled, answer: [...shuffled].sort((a, b) => s.asc ? a.v - b.v : b.v - a.v) })
+  }
+  return shuffle(pool).slice(0, 5)
+})
+
+const sortIndex = ref(0)
+const sortData = reactive({
+  question: '', items: [], answer: [], phase: 'arrange',
+  selectedForPick: -1, selectedIndex: -1, selectedPick: -1,
+  options: [], feedback: '', feedbackText: ''
+})
+
+function initSort(idx) {
+  const q = sortQuestions.value[idx]
+  sortData.question = q.question
+  sortData.items = q.items.map(it => ({ ...it }))
+  sortData.answer = q.answer.map(it => ({ ...it }))
+  sortData.phase = 'arrange'
+  sortData.selectedForPick = -1
+  sortData.selectedIndex = -1
+  sortData.selectedPick = -1
+  sortData.feedback = ''
+  sortData.feedbackText = ''
+  if (!muted.value) setTimeout(() => speakCN(q.question + '，点两个交换位置'), 400)
+}
+
+function clickSortItem(i) {
+  if (sortData.phase !== 'arrange') return
+  if (sortData.selectedForPick === i) { sortData.selectedForPick = -1; return }
+  if (sortData.selectedForPick === -1) { sortData.selectedForPick = i; return }
+  const arr = sortData.items
+  ;[arr[sortData.selectedForPick], arr[i]] = [arr[i], arr[sortData.selectedForPick]]
+  sortData.selectedForPick = -1
+}
+
+function swapItems() {
+  if (sortData.selectedForPick === -1) return
+  const other = (sortData.selectedForPick + 1) % sortData.items.length
+  const arr = sortData.items
+  ;[arr[sortData.selectedForPick], arr[other]] = [arr[other], arr[sortData.selectedForPick]]
+  sortData.selectedForPick = -1
+}
+
+function checkOrder() {
+  if (sortData.selectedForPick !== -1) sortData.selectedForPick = -1
+  const correct = sortData.items.every((it, i) => it.v === sortData.answer[i].v)
+  if (correct) {
+    sortData.feedback = 'correct'
+    sortData.feedbackText = '🎉 排对了！'
+    dinoMood.value = 'excited'; dinoText.value = '排序真厉害！'
+    if (!muted.value) { speakCN('真棒！排对了！') }
+    setTimeout(() => {
+      if (sortIndex.value < sortQuestions.value.length - 1) {
+        sortIndex.value++
+        dinoMood.value = 'happy'; dinoText.value = '再来一排'
+        initSort(sortIndex.value)
+      } else {
+        if (!progressStore.completedModules.sorting) {
+          progressStore.completeModule('sorting'); userStore.updateStars(3); progressStore.unlockSticker('sorting')
+          celebrationStore.show('🔢', '排序小达人！', '你学会了排序！')
+        } else { celebrationStore.show('⭐', '全部完成！', '') }
+      }
+    }, 1000)
   } else {
-    const nextNum = sortSorted.value[sortNextIdx.value]
-    sortResult.value = '😅 再想想，下一个应该是 ' + nextNum
-    setTimeout(() => { sortResult.value = '' }, 1200)
+    sortData.feedback = 'wrong'
+    sortData.feedbackText = '😅 再调整一下~'
+    if (!muted.value) speakCN('再调整一下')
+    setTimeout(() => { sortData.feedback = ''; sortData.feedbackText = '' }, 600)
   }
 }
 
-function slotClick(i) {
-  if (sortSlots.value[i] !== null) {
-    const num = sortSlots.value[i]
-    sortSlots.value[i] = null
-    const idx = sortNumbers.value.indexOf(num)
-    if (idx !== -1) { sortPlaced.value[idx] = false }
-    sortNextIdx.value = i
-    sortResult.value = ''
-  }
-}
-
-initSort()
+initSort(0)
 </script>
 
 <style scoped>
 .sort-module {
-  background: linear-gradient(180deg, #FFFBEB 0%, #FFF8E7 100%);
+  background: linear-gradient(180deg, #EDF5FF 0%, #FFF8E7 100%);
   padding-top: 70px;
   justify-content: flex-start;
 }
-.sort-module .sort-area { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 10px; width: 100%; }
-.sort-module .sort-area .hint { font-size: 22px; color: #888; text-align: center; }
-.sort-module .sort-area .sort-box { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-.sort-module .sort-area .sort-box .sort-num {
-  width: 72px; height: 72px; border-radius: 20px; border: 4px solid #eee;
-  background: #fff; font-size: 40px; font-weight: bold;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.2s; color: var(--text);
+.mute-btn { position: absolute; top: 76px; right: 12px; font-size: 28px; cursor: pointer; user-select: none; z-index: 10; }
+.sort-module .sort-area { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 10px; width: 100%; flex: 1; justify-content: center; }
+.sort-module .sort-area .question { font-size: 24px; color: #666; font-weight: bold; }
+.sort-module .sort-area .sort-items { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.sort-module .sort-area .sort-items .sort-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 16px; border-radius: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  cursor: pointer; transition: all 0.2s; animation: itemFadeIn 0.3s ease both;
 }
-.sort-module .sort-area .sort-box .sort-num:active { transform: scale(0.9); }
-.sort-module .sort-area .sort-box .sort-num.placed {
-  border-color: var(--secondary); background: #E8F8F5;
-  opacity: 0.5; cursor: default; transform: scale(0.9);
+.sort-module .sort-area .sort-items .sort-item:active { transform: scale(0.93); }
+.sort-module .sort-area .sort-items .sort-item .emoji { font-size: 60px; }
+.sort-module .sort-area .sort-items .sort-item .label { font-size: 18px; color: #888; }
+.sort-module .sort-area .sort-items .sort-item.selected { box-shadow: 0 0 0 4px var(--orange); }
+.sort-module .sort-area .sort-items .sort-item.correct { background: rgba(78, 205, 196, 0.3) !important; animation: correctWiggle 0.4s ease; }
+.sort-module .sort-area .sort-items .sort-item.wrong { animation: shake 0.3s ease; }
+.sort-module .sort-area .sort-actions { display: flex; gap: 20px; margin-top: 4px; }
+.sort-module .sort-area .sort-actions button {
+  padding: 10px 30px; border-radius: 16px; border: none;
+  background: var(--orange); color: #fff; font-size: 18px; font-family: inherit;
+  cursor: pointer; transition: all 0.2s;
 }
-.sort-module .sort-area .targets { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; min-height: 72px; }
-.sort-module .sort-area .targets .slot {
-  width: 72px; height: 72px; border-radius: 20px; border: 4px dashed #ddd;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 40px; font-weight: bold; color: var(--secondary);
-  transition: all 0.3s; background: rgba(255, 255, 255, 0.5);
-}
-.sort-module .sort-area .targets .slot.filled {
-  border-style: solid; border-color: var(--secondary);
-  background: #E8F8F5; animation: numberPop 0.3s ease;
-}
-.sort-module .sort-area .targets .slot.highlight { border-color: var(--primary); animation: pulse 1s ease-in-out infinite; }
-.sort-module .sort-area .result { font-size: 28px; font-weight: bold; min-height: 40px; }
+.sort-module .sort-area .sort-actions button:active { transform: scale(0.93); }
+.sort-module .sort-area .feedback { font-size: 32px; min-height: 48px; }
+.progress-bar { width: min(300px, 70vw); height: 8px; background: #e0e0e0; border-radius: 4px; margin: 4px 0; overflow: hidden; }
+.progress-bar .progress-fill { height: 100%; background: #4ECDC4; border-radius: 4px; transition: width 0.4s ease; }
 </style>
