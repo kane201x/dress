@@ -185,6 +185,37 @@ export const bodyQuestions = [
   { emoji: '☝️', english: 'Finger', chinese: '手指', options: ['Finger', 'Hand', 'Foot'] },
 ]
 
+export const phraseQuestions = [
+  { emoji: '👋', english: 'Hello!', chinese: '你好！', situation: '打招呼' },
+  { emoji: '👋', english: 'Goodbye!', chinese: '再见！', situation: '告别' },
+  { emoji: '🌅', english: 'Good morning!', chinese: '早上好！', situation: '早晨问候' },
+  { emoji: '🌇', english: 'Good evening!', chinese: '晚上好！', situation: '晚间问候' },
+  { emoji: '🌙', english: 'Good night!', chinese: '晚安！', situation: '睡前' },
+  { emoji: '🙏', english: 'Thank you!', chinese: '谢谢你！', situation: '感谢' },
+  { emoji: '😊', english: 'You are welcome!', chinese: '不客气！', situation: '回应感谢' },
+  { emoji: '🙇', english: 'I am sorry!', chinese: '对不起！', situation: '道歉' },
+  { emoji: '👍', english: 'Good job!', chinese: '做得好！', situation: '鼓励' },
+  { emoji: '💪', english: 'You can do it!', chinese: '你能行！', situation: '鼓励' },
+  { emoji: '❓', english: 'What is your name?', chinese: '你叫什么名字？', situation: '询问姓名' },
+  { emoji: '📛', english: 'My name is...', chinese: '我叫……', situation: '介绍自己' },
+  { emoji: '🎂', english: 'How old are you?', chinese: '你几岁了？', situation: '询问年龄' },
+  { emoji: '💖', english: 'I love you!', chinese: '我爱你！', situation: '表达爱意' },
+  { emoji: '🤝', english: 'Nice to meet you!', chinese: '很高兴认识你！', situation: '初次见面' },
+  { emoji: '🍽️', english: 'I am hungry.', chinese: '我饿了。', situation: '表达需求' },
+  { emoji: '💧', english: 'I am thirsty.', chinese: '我渴了。', situation: '表达需求' },
+  { emoji: '😴', english: 'I am tired.', chinese: '我累了。', situation: '表达感受' },
+  { emoji: '😄', english: 'I am happy!', chinese: '我很开心！', situation: '表达感受' },
+  { emoji: '😢', english: 'I am sad.', chinese: '我很难过。', situation: '表达感受' },
+  { emoji: '🚽', english: 'May I go to the bathroom?', chinese: '我可以去洗手间吗？', situation: '请求' },
+  { emoji: '🤒', english: 'I don\'t feel well.', chinese: '我不舒服。', situation: '表达不适' },
+  { emoji: '🎉', english: 'Happy birthday!', chinese: '生日快乐！', situation: '祝福' },
+  { emoji: '🎄', english: 'Merry Christmas!', chinese: '圣诞快乐！', situation: '节日祝福' },
+  { emoji: '🧨', english: 'Happy New Year!', chinese: '新年快乐！', situation: '节日祝福' },
+  { emoji: '🍬', english: 'Trick or treat!', chinese: '不给糖就捣蛋！', situation: '万圣节' },
+]
+
+export { songQuestions } from './songsData.js'
+
 export const colorQuestions = [
   { color: '#FF4757', english: 'Red', chinese: '红色' },
   { color: '#2ED573', english: 'Green', chinese: '绿色' },

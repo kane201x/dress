@@ -3,6 +3,7 @@ package com.dino.learn.controller;
 import com.dino.learn.config.JwtConfig;
 import com.dino.learn.dto.ApiResponse;
 import com.dino.learn.dto.LoginRequest;
+import com.dino.learn.dto.RegisterRequest;
 import com.dino.learn.dto.UserVO;
 import com.dino.learn.entity.User;
 import com.dino.learn.service.UserService;
@@ -23,9 +24,18 @@ public class AuthController {
         this.jwtConfig = jwtConfig;
     }
 
+    @PostMapping("/register")
+    public ApiResponse<Map<String, Object>> register(@Valid @RequestBody RegisterRequest request) {
+        User user = userService.register(request.getName(), request.getEmail(), request.getPassword());
+        String token = jwtConfig.generateToken(user.getId(), user.getName());
+        UserVO userVO = userService.toVO(user);
+        Map<String, Object> data = Map.of("user", userVO, "token", token);
+        return ApiResponse.success("Register successful", data);
+    }
+
     @PostMapping("/login")
     public ApiResponse<Map<String, Object>> login(@Valid @RequestBody LoginRequest request) {
-        User user = userService.createUser(request.getName());
+        User user = userService.login(request.getEmail(), request.getPassword());
         String token = jwtConfig.generateToken(user.getId(), user.getName());
         UserVO userVO = userService.toVO(user);
         Map<String, Object> data = Map.of("user", userVO, "token", token);

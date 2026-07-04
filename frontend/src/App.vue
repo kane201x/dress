@@ -39,6 +39,14 @@ function handleFirstClick() {
 }
 
 onMounted(() => {
-  progressStore.loadFromStorage()
+  const token = localStorage.getItem('token')
+  if (!token && router.currentRoute.value.path !== '/login' && router.currentRoute.value.path !== '/') {
+    router.push('/login')
+  }
+  if (token && userStore.userId) {
+    progressStore.loadProgress(userStore.userId)
+  } else {
+    progressStore.loadFromStorage()
+  }
 })
 </script>

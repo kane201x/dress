@@ -17,12 +17,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 import { useProgressStore } from '../../stores/progress'
 import { useCelebrationStore } from '../../stores/celebration'
-import { speakEN } from '../../utils/tts'
+import { speakEN, speakCN } from '../../utils/tts'
 import TopBar from '../../components/TopBar.vue'
 import DinoGuide from '../../components/DinoGuide.vue'
 import { animalQuestions } from '../../utils/quizData'
@@ -47,12 +47,17 @@ const animalFeedbackText = ref('')
 
 function resetAnimal() { animalFeedback.value = ''; animalPick.value = -1; animalFeedbackText.value = '' }
 
+watch(animalIndex, () => { nextTick(() => speakCN('这是什么动物？')) })
+
+nextTick(() => speakCN('这是什么动物？'))
+
 function pickAnimal(i) {
   if (animalFeedback.value) return
   animalPick.value = i
   if (animalOptions.value[i] === animalData.value.english) {
     animalFeedback.value = 'correct'
     animalFeedbackText.value = '🎉 ' + animalData.value.english + '！'
+    speakCN('你真棒！')
     setTimeout(() => {
       if (animalIndex.value < animalQuestions.length - 1) {
         animalIndex.value++

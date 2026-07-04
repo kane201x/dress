@@ -19,7 +19,7 @@
         <span class="icon">🔤</span>
         <span class="label">学英语</span>
         <span class="sub">字母 / 颜色 / 动物</span>
-        <span class="prog">{{ store.engDoneCount }}/6 模块</span>
+        <span class="prog">{{ store.engDoneCount }}/9 模块</span>
       </button>
       <button class="subject-card card-poetry" @click="router.push('/poetry')">
         <span class="icon">📜</span>
@@ -33,6 +33,7 @@
         <span class="sub">{{ userStore.stars }} 颗星星</span>
       </button>
     </div>
+    <button class="logout-btn" @click="doLogout">🚪 退出登录</button>
   </div>
 </template>
 
@@ -50,6 +51,11 @@ const diffLabels = ['简单', '复杂', '困难', '超级困难']
 const diffEmojis = ['🌱', '🌿', '🔥', '💎']
 
 function changeDiff(level) { userStore.updateDifficulty(level) }
+
+function doLogout() {
+  userStore.logout()
+  router.push('/login')
+}
 </script>
 
 <style scoped>
@@ -99,4 +105,10 @@ function changeDiff(level) { userStore.updateDifficulty(level) }
 .menu .subject-card.card-poetry { border-bottom: 6px solid var(--purple); }
 .menu .subject-card.card-rewards { border-bottom: 6px solid var(--yellow); }
 .menu .subject-card .prog { font-size: 14px; color: #bbb; margin-top: 2px; }
+.menu .logout-btn {
+  margin: 16px auto 10px; padding: 10px 24px; border: none; border-radius: 20px;
+  background: #f0f0f0; color: #999; font-size: 14px; font-family: inherit;
+  cursor: pointer; transition: all 0.2s;
+}
+.menu .logout-btn:active { background: #e0e0e0; }
 </style>

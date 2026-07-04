@@ -74,13 +74,23 @@ public class TtsService {
                 "parameters", parameters
             );
 
+            log.debug("TTS request URL: {}", url);
+            log.debug("TTS request body: {}", requestBody);
+
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+
+            log.debug("TTS response status: {}", response.getStatusCode());
+            log.debug("TTS response body: {}", response.getBody());
 
             if (response.getBody() != null) {
                 Map<String, Object> output = (Map<String, Object>) response.getBody().get("output");
                 if (output != null && output.get("audio") != null) {
-                    return java.util.Base64.getDecoder().decode((String) output.get("audio"));
+                    String audioStr = (String) output.get("audio");
+                    if (audioStr.startsWith("data:")) {
+                        audioStr = audioStr.substring(audioStr.indexOf(",") + 1);
+                    }
+                    return java.util.Base64.getDecoder().decode(audioStr);
                 }
             }
 

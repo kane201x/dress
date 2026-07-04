@@ -10,8 +10,12 @@ api.interceptors.request.use(config => {
   return config
 })
 
-export function login(name) {
-  return api.post('/auth/login', { name })
+export function login(email, password) {
+  return api.post('/auth/login', { email, password })
+}
+
+export function register(name, email, password) {
+  return api.post('/auth/register', { name, email, password })
 }
 
 export function getUser(id) {

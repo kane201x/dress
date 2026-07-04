@@ -94,7 +94,7 @@ function pickShape(i) {
       if (shapeIndex.value < shapeList.value.length - 1) {
         shapeIndex.value++
         initShape(shapeIndex.value)
-        nextTick(() => speakCN('找到一样的形状'))
+        setTimeout(() => speakCN('找到一样的形状'), 300)
       } else {
         if (!progressStore.completedModules.shapes) {
           progressStore.completeModule('shapes')
@@ -103,7 +103,7 @@ function pickShape(i) {
           celebrationStore.show('🔵', '形状大师！', '你认识了所有形状！')
         } else { celebrationStore.show('⭐', '全部完成！', '') }
       }
-    }, 1000)
+    }, 3000)
   } else {
     shapeData.feedback = 'wrong'
     shapeData.feedbackText = '😅 再试试~'

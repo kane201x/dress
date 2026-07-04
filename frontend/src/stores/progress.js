@@ -18,6 +18,9 @@ export const useProgressStore = defineStore('progress', () => {
     { emoji: '🍎', name: '水果大王', unlocked: false, key: 'fruits' },
     { emoji: '🚗', name: '交通小专家', unlocked: false, key: 'vehicles' },
     { emoji: '👶', name: '身体小博士', unlocked: false, key: 'body' },
+    { emoji: '🔢', name: '数数小天才', unlocked: false, key: 'countingEn' },
+    { emoji: '💬', name: '口语小达人', unlocked: false, key: 'phrases' },
+    { emoji: '🎵', name: '儿歌小歌星', unlocked: false, key: 'songs' },
     { emoji: '📜', name: '古诗小才子', unlocked: false, key: 'poemAll' },
     { emoji: '⭐', name: '星星收集家', unlocked: false, key: 'starAll' },
   ])
@@ -27,7 +30,7 @@ export const useProgressStore = defineStore('progress', () => {
     ['numbers', 'counting', 'shapes', 'compare', 'sorting', 'addition'].filter(k => completedModules.value[k]).length
   )
   const engDoneCount = computed(() =>
-    ['alphabet', 'colors', 'animals', 'fruits', 'vehicles', 'body'].filter(k => completedModules.value[k]).length
+    ['alphabet', 'colors', 'animals', 'fruits', 'vehicles', 'body', 'countingEn', 'phrases', 'songs'].filter(k => completedModules.value[k]).length
   )
   const poetryDoneCount = computed(() => {
     let count = 0

@@ -47,7 +47,7 @@ function celebrate() {
 }
 .rewards-page .star-collection .star-item { font-size: 44px; transition: all 0.3s; }
 .rewards-page .star-collection .star-item.empty { filter: grayscale(1); opacity: 0.3; }
-.rewards-page .star-collection .star-item.filled { animation: starFloat 2s ease-in-out infinite; }
+.rewards-page .star-collection .star-item.filled { }
 .rewards-page .star-count { font-size: 28px; margin-top: 8px; color: #888; }
 .rewards-page .stickers {
   display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 20px;

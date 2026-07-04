@@ -1,7 +1,7 @@
 <template>
   <div class="page submenu english-menu">
     <TopBar back-route="/menu" @back="router.push('/menu')" />
-    <div class="sub-title"><span class="sub-icon">🔤</span>学英语 <span style="font-size:16px;color:#aaa;">({{ store.engDoneCount }}/6)</span></div>
+    <div class="sub-title"><span class="sub-icon">🔤</span>学英语 <span style="font-size:16px;color:#aaa;">({{ store.engDoneCount }}/9)</span></div>
     <div class="module-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <button class="module-card" :class="{completed: store.completedModules.alphabet}" @click="router.push('/english/alphabet')">
         <span class="icon">🔤</span><span class="label">字母</span><span class="badge">A~Z</span>
@@ -20,6 +20,15 @@
       </button>
       <button class="module-card" :class="{completed: store.completedModules.body}" @click="router.push('/english/body')">
         <span class="icon">👶</span><span class="label">身体部位</span><span class="badge">10个</span>
+      </button>
+      <button class="module-card" :class="{completed: store.completedModules.countingEn}" @click="router.push('/english/counting-en')">
+        <span class="icon">🔢</span><span class="label">数数</span><span class="badge">0~110</span>
+      </button>
+      <button class="module-card" :class="{completed: store.completedModules.phrases}" @click="router.push('/english/phrases')">
+        <span class="icon">💬</span><span class="label">口语</span><span class="badge">日常对话</span>
+      </button>
+      <button class="module-card" :class="{completed: store.completedModules.songs}" @click="router.push('/english/songs')">
+        <span class="icon">🎵</span><span class="label">儿歌</span><span class="badge">10首</span>
       </button>
     </div>
   </div>
