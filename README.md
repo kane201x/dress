@@ -58,10 +58,7 @@ docker compose up -d
 ### 环境变量（默认值开箱即用）
 
 ```yaml
-DB_URL:      jdbc:mysql://YOUR_SERVER_IP:3306/knowall?...
-DB_USER:     root
-DB_PASS:     YOUR_DB_PASS
-AI_BASE_URL: https://YOUR_PROXY_DOMAIN/v1
+DB_URL:      jdbc:mysql://*:3306/knowall?...
 AI_MODEL:    glm/glm-5
 TTS_MODEL:   qwen3-tts-flash
 TTS_VOICE:   CHERRY
@@ -126,7 +123,7 @@ gradlew assembleDebug
 # app/build/outputs/apk/debug/app-debug.apk
 ```
 
-APK 内置前端 dist，加载方式为 `loadDataWithBaseURL()`，资源请求走 `http://YOUR_SERVER_IP:3000`。
+APK 内置前端 dist，加载方式为 `loadDataWithBaseURL()`，资源请求走 `http://ip:3000`。
 
 ### 原生 TTS 桥接
 
