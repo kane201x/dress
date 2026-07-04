@@ -57,12 +57,11 @@ docker compose up -d
 
 ### 环境变量
 
-```yaml
-DB_URL:      jdbc:mysql://*:3306/knowall?...
-AI_MODEL:    glm/glm-5
-TTS_MODEL:   qwen3-tts-flash
-TTS_VOICE:   CHERRY
-JWT_SECRET:  MailuoSecretKey...
+复制 `.env.example` 为 `.env`（或使用 `docker-compose-dev.yml`），填入实际值：
+
+```bash
+cp .env.example .env
+docker compose up -d
 ```
 
 ---
