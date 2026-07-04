@@ -55,7 +55,7 @@ docker compose up -d
 # MinIO Console：http://localhost:9001
 ```
 
-### 环境变量（默认值开箱即用）
+### 环境变量
 
 ```yaml
 DB_URL:      jdbc:mysql://*:3306/knowall?...

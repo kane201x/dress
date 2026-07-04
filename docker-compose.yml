@@ -5,8 +5,8 @@ services:
     image: mysql:8.0
     container_name: dino-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: YOUR_DB_PASS
-      MYSQL_DATABASE: knowall
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME:-knowall}
       MYSQL_CHARACTER_SET_SERVER: utf8mb4
       MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
     ports:
@@ -31,8 +31,8 @@ services:
       - minio-data:/data
       - minio-config:/root/.minio
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
     command: server /data --console-address ":9001"
     restart: unless-stopped
 
@@ -40,22 +40,22 @@ services:
     build: ./backend
     container_name: dino-backend
     environment:
-      DB_URL: jdbc:mysql://mysql:3306/knowall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-      DB_USER: root
-      DB_PASS: YOUR_DB_PASS
-      AI_API_KEY: YOUR_AI_API_KEY
-      AI_BASE_URL: https://YOUR_PROXY_DOMAIN/v1
-      AI_MODEL: glm/glm-5
-      DASHSCOPE_API_KEY: YOUR_DASHSCOPE_API_KEY
-      VL_MODEL: qwen3.6-plus
-      TTS_MODEL: qwen3-tts-flash
-      TTS_VOICE: CHERRY
-      JWT_SECRET: YOUR_JWT_SECRET
-      JWT_EXPIRATION: "604800000"
-      MINIO_ENDPOINT: http://YOUR_SERVER_IP:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_BUCKET: tts-audio
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      AI_API_KEY: ${AI_API_KEY}
+      AI_BASE_URL: ${AI_BASE_URL}
+      AI_MODEL: ${AI_MODEL:-glm/glm-5}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+      VL_MODEL: ${VL_MODEL:-qwen3.6-plus}
+      TTS_MODEL: ${TTS_MODEL:-qwen3-tts-flash}
+      TTS_VOICE: ${TTS_VOICE:-CHERRY}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-604800000}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET:-tts-audio}
     ports:
       - "8080:8080"
     depends_on:

@@ -21,6 +21,7 @@ Thumbs.db
 .env
 *.log
 backend/src/main/resources/application-dev.yml
+docker-compose-dev.yml
 
 # Temp
 /tmp/
