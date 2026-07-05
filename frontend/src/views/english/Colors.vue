@@ -13,7 +13,9 @@
         <button v-for="(c,i) in currentOptions" :key="i"
           :style="{background: c}"
           :class="{correct: colorFeedback==='correct' && colorPick===i, wrong: colorFeedback==='wrong' && colorPick===i}"
-          @click="speakColor(colorNameFromCode(c)); pickColor(i)"></button>
+          @click="speakColor(colorNameFromCode(c)); pickColor(i)">
+          <span class="color-label">{{ colorNameFromCode(c) }}</span>
+        </button>
       </div>
       <div class="feedback">{{ colorFeedbackText }}</div>
       <div class="progress-bar">
@@ -124,6 +126,13 @@ function pickColor(i) {
 .color-module .color-area .color-options button {
   width: 80px; height: 80px; border-radius: 20px; border: 4px solid transparent;
   cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative; overflow: hidden;
+}
+.color-module .color-area .color-options button .color-label {
+  position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; font-weight: bold; color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6), 0 0 2px rgba(0,0,0,0.4);
+  white-space: nowrap; pointer-events: none;
 }
 .color-module .color-area .color-options button:active { transform: scale(0.9); }
 .color-module .color-area .color-options button.correct { border-color: #333; animation: correctWiggle 0.4s ease; }

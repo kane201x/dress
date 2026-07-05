@@ -9,7 +9,10 @@
       <div class="animal-options">
         <button v-for="(opt,i) in animalOptions" :key="i"
           :class="{correct: animalFeedback==='correct' && animalPick===i, wrong: animalFeedback==='wrong' && animalPick===i}"
-          @click="speakAnimal(opt); pickAnimal(i)">{{ opt }}</button>
+          @click="speakAnimal(opt); pickAnimal(i)">
+          <span class="en">{{ opt }}</span>
+          <span class="cn">{{ chineseMap[opt] }}</span>
+        </button>
       </div>
       <div class="feedback">{{ animalFeedbackText }}</div>
       <div class="progress-bar">
@@ -46,6 +49,7 @@ function tapDino() {
 
 function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] }; return a }
 
+const chineseMap = Object.fromEntries(animalQuestions.map(a => [a.english, a.chinese]))
 const sessionQuestions = computed(() => shuffle(animalQuestions).slice(0, 5))
 const animalIndex = ref(0)
 const animalData = computed(() => sessionQuestions.value[animalIndex.value])
@@ -102,11 +106,12 @@ function pickAnimal(i) {
 .animal-module .animal-area .hint { font-size: 20px; color: #888; }
 .animal-module .animal-area .animal-options { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 .animal-module .animal-area .animal-options button {
-  padding: 14px 28px; border-radius: 20px; border: 4px solid transparent;
+  padding: 10px 24px; border-radius: 20px; border: 4px solid transparent;
   background: #fff; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  font-size: 28px; font-weight: bold; font-family: inherit;
-  cursor: pointer; transition: all 0.2s; color: var(--text);
+  cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px;
 }
+.animal-module .animal-area .animal-options button .en { font-size: 26px; font-weight: bold; color: var(--text); font-family: inherit; }
+.animal-module .animal-area .animal-options button .cn { font-size: 14px; color: #999; }
 .animal-module .animal-area .animal-options button:active { transform: scale(0.9); }
 .animal-module .animal-area .animal-options button.correct { border-color: var(--secondary); background: #E8F8F5; animation: correctWiggle 0.4s ease; }
 .animal-module .animal-area .animal-options button.wrong { border-color: var(--primary); background: #FFF0F0; animation: shake 0.3s ease; }

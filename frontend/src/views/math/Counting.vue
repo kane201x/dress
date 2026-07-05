@@ -94,10 +94,11 @@ const answerOptions = ref([])
 const gridCols = computed(() => countData.total >= 10 ? 10 : countData.total)
 
 function objStyle(total) {
-  if (total > 80) return { fontSize: '22px', padding: '2px' }
-  if (total > 50) return { fontSize: '26px', padding: '2px 3px' }
-  if (total > 30) return { fontSize: '30px', padding: '2px 3px' }
-  return { fontSize: '38px', padding: '3px 5px' }
+  if (total > 120) return { fontSize: '18px', padding: '1px' }
+  if (total > 80) return { fontSize: '20px', padding: '1px 2px' }
+  if (total > 50) return { fontSize: '24px', padding: '2px' }
+  if (total > 30) return { fontSize: '28px', padding: '2px' }
+  return { fontSize: '36px', padding: '2px 4px' }
 }
 
 function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min }
@@ -109,9 +110,9 @@ const countScenes = computed(() => {
   let minCount, maxCount
   if (d === 1) { minCount = 2; maxCount = 5 }
   else if (d === 2) { minCount = 3; maxCount = 10 }
-  else if (d === 3) { minCount = 5; maxCount = 20 }
-  else if (d === 4) { minCount = 8; maxCount = 40 }
-  else { minCount = 10; maxCount = 100 }
+  else if (d === 3) { minCount = 50; maxCount = 80 }
+  else if (d === 4) { minCount = 60; maxCount = 100 }
+  else { minCount = 80; maxCount = 150 }
   const pool = []
   for (let i = 0; i < 50; i++) {
     const total = randInt(minCount, maxCount)
@@ -221,18 +222,18 @@ initCount(0)
   font-size: 28px; cursor: pointer; user-select: none;
   z-index: 10;
 }
-.counting-module .scene { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 6px; width: 100%; padding: 0 4px; flex: 1; justify-content: center; }
+.counting-module .scene { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 6px; width: 100%; padding: 0 1px; flex: 1; justify-content: center; }
 .counting-module .scene .question { font-size: 26px; color: #666; font-weight: bold; }
 .counting-module .scene .objects {
-  display: grid; gap: 3px; justify-items: center; align-items: center;
-  padding: 8px; min-height: 60px; max-width: 460px; width: 100%;
+  display: grid; gap: 1px; justify-items: center; align-items: center;
+  padding: 4px; min-height: 60px; max-width: 100%; width: 100%; box-sizing: border-box;
 }
 .counting-module .scene .objects.cols-10 { grid-template-columns: repeat(10, 1fr); }
 .counting-module .scene .objects .obj {
   cursor: pointer; transition: all 0.2s; user-select: none;
-  border-radius: 10px; background: rgba(255, 255, 255, 0.6);
-  width: 100%; text-align: center; line-height: 1.2;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border-radius: 8px; background: rgba(255, 255, 255, 0.6);
+  width: 100%; min-width: 0; text-align: center; line-height: 1.2;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 .counting-module .scene .objects .obj:active { transform: scale(1.4); background: rgba(255,255,200,0.8); }
 .counting-module .scene .objects .obj.counted { opacity: 0.2; transform: scale(0.7); }
